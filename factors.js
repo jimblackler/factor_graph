@@ -29,21 +29,27 @@ function updateDiagram() {
 
   nodes.splice(number_factors, nodes.length - number_factors);
 
+
   for (let n = 0; n != number_factors; n++) {
+    const factors = [];
     const v = n + 2;
 
-    let f = Math.sqrt(v) | 0;
-    while (f > 1) {
-      const f2  = v / f;
-      if (f2 == (f2 | 0)) {
-        graph.newEdge(nodes[n], nodes[f2 - 2], {length: 2});
-
-        if (f2 % f > 0) {
-          graph.newEdge(nodes[n], nodes[f - 2], {length: 2});
-        }
-        break;
+    for (let f = v / 2 | 0; f > 1; f--) {
+      if (v % f !== 0) {
+        continue;
       }
-      f--;
+      let factor_exists = false;
+      for (let i = 0; i < factors.length; i++) {
+        if (factors[i] % f === 0) {
+          factor_exists = true;
+          break;
+        }
+      }
+
+      if (!factor_exists) {
+        factors.push(f);
+        graph.newEdge(nodes[n], nodes[f - 2], {length: 2});
+      }
     }
   }
 }
